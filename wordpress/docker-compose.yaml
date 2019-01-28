@@ -1,0 +1,37 @@
+version: '3'
+services:
+    web:
+        image: bitnami/wordpress:5
+        ports:
+            - '8084:80'
+        environment:
+            - MARIADB_HOST=db
+            - WORDPRESS_DATABASE_USER=wp
+            - WORDPRESS_DATABASE_PASSWORD=test
+            - WORDPRESS_DATABASE_NAME=wordpress
+            - WORDPRESS_USERNAME=admin
+            - WORDPRESS_PASSWORD=admin
+        volumes:
+            - './wp:/bitnami'
+        depends_on:
+            - db
+        restart: always
+    db:
+        image: mariadb:latest
+        volumes:
+            - './db:/var/lib/mysql'
+        environment:
+            - MYSQL_ROOT_PASSWORD=test
+            - MYSQL_USER=wp
+            - MYSQL_PASSWORD=test
+            - MYSQL_DATABASE=wordpress
+        restart: always
+    pma:
+        image: phpmyadmin/phpmyadmin:latest
+        ports:
+            - '8085:80'
+        environment:
+            - PMA_ABSOLUTE_URI=http://127.0.0.1:8085/
+        depends_on:
+            - db
+        restart: always
